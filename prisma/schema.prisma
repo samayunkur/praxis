@@ -1,0 +1,138 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  name      String?
+  email     String?  @unique
+  image     String?
+  bio       String?
+  points    Int      @default(0)
+  rank      String   @default("Bronze")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  goals       Goal[]
+  logs        ActionLog[]
+  posts       Post[]
+  likes       Like[]
+  follows     Follow[]     @relation("follower")
+  followers   Follow[]     @relation("following")
+  toolResults ToolResult[]
+}
+
+model Issue {
+  id          String @id @default(cuid())
+  name        String @unique
+  emoji       String
+  description String
+  color       String
+  cards       ActionCard[]
+}
+
+model ActionCard {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  detail      String
+  evidence    String?
+  difficulty  Int      @default(2)
+  duration    Int      @default(10)
+  impact      Int      @default(3)
+  issueId     String
+  isPublic    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  issue Issue      @relation(fields: [issueId], references: [id])
+  goals Goal[]
+  logs  ActionLog[]
+  tags  CardTag[]
+}
+
+model Tag {
+  id    String    @id @default(cuid())
+  name  String    @unique
+  cards CardTag[]
+}
+
+model CardTag {
+  cardId String
+  tagId  String
+  card   ActionCard @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  tag    Tag        @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([cardId, tagId])
+}
+
+model Goal {
+  id         String   @id @default(cuid())
+  userId     String
+  cardId     String
+  frequency  String   @default("daily")
+  targetDays Int      @default(7)
+  startDate  DateTime @default(now())
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+
+  user User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  card ActionCard @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  logs ActionLog[]
+}
+
+model ActionLog {
+  id     String   @id @default(cuid())
+  userId String
+  cardId String
+  goalId String?
+  note   String?
+  doneAt DateTime @default(now())
+  points Int      @default(10)
+
+  user User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  card ActionCard @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  goal Goal?      @relation(fields: [goalId], references: [id])
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  userId    String
+  content   String
+  cardId    String?
+  createdAt DateTime @default(now())
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  likes Like[]
+}
+
+model Like {
+  userId String
+  postId String
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@id([userId, postId])
+}
+
+model Follow {
+  followerId  String
+  followingId String
+  follower    User @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@id([followerId, followingId])
+}
+
+model ToolResult {
+  id        String   @id @default(cuid())
+  userId    String
+  toolName  String
+  result    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
