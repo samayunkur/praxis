@@ -6,7 +6,7 @@ import Link from "next/link";
 import { rankColor } from "@/lib/utils";
 import ActivityCalendar from "@/components/ActivityCalendar";
 
-export default async function ProfilePage({ params }: { params: { username: string } }) {
+export default async function ProfilePage({ params }: { params: Promise<{ username: string }> }) {
   const session = await auth();
   const currentUserId = session?.user?.id;
   const { username } = await params;

@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 import { difficultyColor, difficultyLabel } from "@/lib/utils";
 import StarRating from "@/components/StarRating";
 
-export default async function IssueDetailPage({ params }: { params: { id: string } }) {
+export default async function IssueDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   if (!session?.user?.id) redirect("/");
   const userId = session!.user.id;
