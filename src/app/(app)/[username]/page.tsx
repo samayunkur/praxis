@@ -115,7 +115,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
       {/* Activity Calendar */}
       <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5 mb-6">
         <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Activity</h2>
-        <ActivityCalendar logs={allLogs.map((l) => ({ doneAt: l.doneAt.toISOString() }))} />
+        <ActivityCalendar logs={allLogs.map((l: { doneAt: Date }) => ({ doneAt: l.doneAt.toISOString() }))} />
       </div>
 
       {/* Badges */}
