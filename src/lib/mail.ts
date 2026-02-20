@@ -1,15 +1,6 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
-const transporter = nodemailer.createTransport({
-  host: "mail1005.onamae.ne.jp",
-  port: 587,
-  secure: false,
-  requireTLS: true,
-  auth: {
-    user: process.env.MAIL_USER!,
-    pass: process.env.MAIL_PASS!,
-  },
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function sendMail({
   to,
@@ -22,13 +13,14 @@ export async function sendMail({
   html?: string;
   text?: string;
 }) {
-  return transporter.sendMail({
-    from: `"Praxis" <${process.env.MAIL_USER}>`,
+  const { error } = await resend.emails.send({
+    from: "Praxis <noreply@m.meo0.com>",
     to,
     subject,
     html,
     text,
   });
+  if (error) throw new Error(error.message);
 }
 
 export async function sendPasswordResetEmail(to: string, token: string) {
