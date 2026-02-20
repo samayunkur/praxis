@@ -2,8 +2,9 @@ import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
   host: "mail1005.onamae.ne.jp",
-  port: 465,
-  secure: true,
+  port: 587,
+  secure: false,
+  requireTLS: true,
   auth: {
     user: process.env.MAIL_USER!,
     pass: process.env.MAIL_PASS!,
