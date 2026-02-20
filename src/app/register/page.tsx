@@ -21,7 +21,7 @@ export default function RegisterPage() {
     if (password.length < 8) { setError("パスワードは8文字以上にしてください"); return; }
     setLoading(true);
 
-    const res = await fetch("/api/auth/register", {
+    const res = await fetch("/api/user/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username: username.trim(), email: email.trim(), password }),

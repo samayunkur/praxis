@@ -20,7 +20,7 @@ export default function ResetPasswordPage({ params }: { params: Promise<{ token:
     setLoading(true);
 
     const { token } = await params;
-    const res = await fetch("/api/auth/reset", {
+    const res = await fetch("/api/user/reset", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token, password }),
