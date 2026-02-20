@@ -10,6 +10,7 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [notVerified, setNotVerified] = useState(false);
   const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent) {
@@ -17,6 +18,21 @@ export default function LoginForm() {
     if (!username.trim() || !password) return;
     setLoading(true);
     setError("");
+    setNotVerified(false);
+
+    // メール認証状態を事前確認
+    const check = await fetch("/api/user/check-verified", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: username.trim() }),
+    }).then((r) => r.json()).catch(() => ({ verified: true }));
+
+    if (check.verified === false) {
+      setNotVerified(true);
+      setLoading(false);
+      return;
+    }
+
     const result = await signIn("credentials", {
       username: username.trim(),
       password,
@@ -39,7 +55,7 @@ export default function LoginForm() {
           type="text"
           placeholder="ユーザー名"
           value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          onChange={(e) => { setUsername(e.target.value); setNotVerified(false); }}
           className="w-full px-4 py-3 rounded-xl bg-gray-800 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
           autoFocus
           autoComplete="username"
@@ -53,6 +69,14 @@ export default function LoginForm() {
           autoComplete="current-password"
         />
         {error && <p className="text-red-400 text-sm">{error}</p>}
+        {notVerified && (
+          <div className="bg-yellow-900/30 border border-yellow-700/50 rounded-xl p-3 text-sm">
+            <p className="text-yellow-300 font-semibold mb-1">📬 メールアドレスが未認証です</p>
+            <p className="text-yellow-200/70">
+              登録時に送信した確認メールのリンクをクリックしてください。
+            </p>
+          </div>
+        )}
         <button
           type="submit"
           disabled={loading || !username.trim() || !password}

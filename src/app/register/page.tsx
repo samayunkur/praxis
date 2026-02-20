@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function RegisterPage() {
@@ -12,7 +11,6 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
-  const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -32,14 +30,22 @@ export default function RegisterPage() {
     if (!res.ok) { setError(data.error ?? "登録に失敗しました"); return; }
 
     setDone(true);
-    setTimeout(() => router.push("/"), 2000);
   }
 
   if (done) return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-      <div className="text-center">
-        <div className="text-4xl mb-4">✅</div>
-        <p className="text-white font-semibold">登録完了！ログイン画面へ移動します…</p>
+    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
+      <div className="text-center max-w-sm">
+        <div className="text-5xl mb-4">📬</div>
+        <h1 className="text-xl font-bold text-white mb-2">確認メールを送りました</h1>
+        <p className="text-gray-400 text-sm mb-2">
+          <span className="text-white font-medium">{email}</span> に確認メールを送信しました。
+        </p>
+        <p className="text-gray-500 text-sm mb-6">
+          メール内のリンクをクリックすると、アカウントが有効化されてログインできるようになります。
+        </p>
+        <p className="text-gray-600 text-xs">
+          メールが届かない場合は迷惑メールフォルダもご確認ください。
+        </p>
       </div>
     </div>
   );
