@@ -1,35 +1,13 @@
-"use client";
-import { useState } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import LoginForm from "@/components/LoginForm";
+
+const features = [
+  { icon: "🃏", title: "Action Cards", desc: "Evidence-based micro-actions for every area of life" },
+  { icon: "📌", title: "Goal Tracking", desc: "Set daily goals and visualize your streaks" },
+  { icon: "🧰", title: "Science Tools", desc: "Value Lantern, Concordance assessment & more" },
+  { icon: "🌐", title: "Community", desc: "Share wins and follow peers on their journey" },
+];
 
 export default function LandingPage() {
-  const [username, setUsername] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const router = useRouter();
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!username.trim()) return;
-    setLoading(true);
-    setError("");
-    const result = await signIn("credentials", { username: username.trim(), redirect: false });
-    if (result?.error) {
-      setError("Login failed. Please try again.");
-      setLoading(false);
-    } else {
-      router.push("/dashboard");
-    }
-  }
-
-  const features = [
-    { icon: "🃏", title: "Action Cards", desc: "Evidence-based micro-actions for every area of life" },
-    { icon: "📌", title: "Goal Tracking", desc: "Set daily goals and visualize your streaks" },
-    { icon: "🧰", title: "Science Tools", desc: "Value Lantern, Concordance assessment & more" },
-    { icon: "🌐", title: "Community", desc: "Share wins and follow peers on their journey" },
-  ];
-
   return (
     <div className="min-h-screen bg-gray-950 flex flex-col">
       {/* Hero */}
@@ -46,33 +24,9 @@ export default function LandingPage() {
           </p>
         </div>
 
-        {/* Login form */}
+        {/* Login form (client component) */}
         <div className="w-full max-w-sm">
-          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
-            <h2 className="text-lg font-bold text-white mb-1">Get started</h2>
-            <p className="text-sm text-gray-500 mb-5">Enter a username to start your journey</p>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <input
-                type="text"
-                placeholder="your_username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-gray-800 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
-                autoFocus
-              />
-              {error && <p className="text-red-400 text-sm">{error}</p>}
-              <button
-                type="submit"
-                disabled={loading || !username.trim()}
-                className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold transition-colors"
-              >
-                {loading ? "Entering..." : "Enter Praxis →"}
-              </button>
-            </form>
-            <p className="text-xs text-gray-600 text-center mt-4">
-              New username? An account is created automatically.
-            </p>
-          </div>
+          <LoginForm />
         </div>
 
         {/* Features */}
