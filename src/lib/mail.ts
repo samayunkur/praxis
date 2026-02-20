@@ -13,14 +13,14 @@ export async function sendMail({
   html?: string;
   text?: string;
 }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await resend.emails.send({
     from: "Praxis <noreply@m.meo0.com>",
     to,
     subject,
-    html,
-    text,
-  });
-  if (error) throw new Error(error.message);
+    html: html ?? text ?? "",
+  } as any);
+  if (error) throw new Error((error as { message: string }).message);
 }
 
 export async function sendPasswordResetEmail(to: string, token: string) {
